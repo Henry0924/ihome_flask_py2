@@ -1,0 +1,14 @@
+INFO _internal.py:87  * Running on http://127.0.0.1:5000/ (Press CTRL+C to quit)
+INFO _internal.py:87  * Restarting with stat
+WARNING _internal.py:87  * Debugger is active!
+INFO _internal.py:87  * Debugger PIN: 210-345-714
+ERROR index.py:9 err msg
+WARNING index.py:10 warn msg
+INFO index.py:11 info msg
+DEBUG index.py:12 debug msg
+INFO _internal.py:87 127.0.0.1 - - [11/May/2018 19:34:20] "GET /index HTTP/1.1" 200 -
+ERROR index.py:9 err msg
+WARNING index.py:10 warn msg
+INFO index.py:11 info msg
+DEBUG index.py:12 debug msg
+INFO _internal.py:87 127.0.0.1 - - [11/May/2018 19:34:23] "GET /index HTTP/1.1" 200 -
