@@ -8,6 +8,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_wtf.csrf import CSRFProtect
 from flask_session import Session
 from logging.handlers import RotatingFileHandler
+from utils.commons import RegexConverter
 
 
 # 构建数据库对象
@@ -53,8 +54,14 @@ def creat_app(config_name):
     # 将flask里的session数据保存到redis中
     Session(app)
 
+    # 向app中添加自定义的路由转换器
+    app.url_map.converters["re"] = RegexConverter
+
     # 注册蓝图
     import api_1_0
-    app.register_blueprint(api_1_0.api, url_prefix="")
+    app.register_blueprint(api_1_0.api, url_prefix="/api/v1_0")
+    # 提供html静态文件的蓝图
+    import web_html
+    app.register_blueprint(web_html.html)
 
     return app

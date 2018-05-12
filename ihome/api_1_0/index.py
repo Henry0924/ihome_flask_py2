@@ -2,6 +2,7 @@
 
 import logging
 from . import api
+from ihome import db, models
 
 
 @api.route('/index')
@@ -11,4 +12,4 @@ def index():
     logging.info("info msg")
     logging.debug("debug msg")
 
-    return 'index page ihome_py2'
+    return 'index page ihome_flask_py2'
