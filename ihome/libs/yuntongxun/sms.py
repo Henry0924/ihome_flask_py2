@@ -38,10 +38,10 @@ class CCP(object):
         if not cls.instance:
             cls.instance = super(CCP, cls).__new__(cls)
 
-        # 初始化REST SDK
-        cls.instance.rest = REST(serverIP, serverPort, softVersion)
-        cls.instance.rest.setAccount(accountSid, accountToken)
-        cls.instance.rest.setAppId(appId)
+            # 初始化REST SDK
+            cls.instance.rest = REST(serverIP, serverPort, softVersion)
+            cls.instance.rest.setAccount(accountSid, accountToken)
+            cls.instance.rest.setAppId(appId)
 
         return cls.instance
 
