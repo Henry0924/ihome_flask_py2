@@ -84,4 +84,18 @@ $(document).ready(function(){
         var date = $(this).datepicker("getFormattedDate");
         $("#start-date-input").val(date);
     });
-})
+
+    // 判断用户登录状态
+    $.get("api/v1_0/session", function (resp) {
+        if (resp.error_code == 0){
+            // 用户已登录
+            $(".register-login").hide();
+            $(".user-info").show().children(".user-name").text(resp.username);
+        } else {
+            $(".register-login").show();
+            $(".user-info").hide();
+        }
+
+    })
+
+});

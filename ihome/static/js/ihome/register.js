@@ -43,30 +43,54 @@ function sendSMSCode() {
         $(".phonecode-a").attr("onclick", "sendSMSCode();");
         return;
     }
-    $.get("/api/smscode", {mobile:mobile, code:imageCode, codeId:imageCodeId}, 
-        function(data){
-            if (0 != data.errno) {
-                $("#image-code-err span").html(data.errmsg); 
-                $("#image-code-err").show();
-                if (2 == data.errno || 3 == data.errno) {
-                    generateImageCode();
+    // $.get("/api/smscode", {mobile:mobile, code:imageCode, codeId:imageCodeId},
+    //     function(data){
+    //         if (0 != data.errno) {
+    //             $("#image-code-err span").html(data.errmsg);
+    //             $("#image-code-err").show();
+    //             if (2 == data.errno || 3 == data.errno) {
+    //                 generateImageCode();
+    //             }
+    //             $(".phonecode-a").attr("onclick", "sendSMSCode();");
+    //         }
+    //         else {
+    //             var $time = $(".phonecode-a");
+    //             var duration = 60;
+    //             var intervalid = setInterval(function(){
+    //                 $time.html(duration + "秒");
+    //                 if(duration === 1){
+    //                     clearInterval(intervalid);
+    //                     $time.html('获取验证码');
+    //                     $(".phonecode-a").attr("onclick", "sendSMSCode();");
+    //                 }
+    //                 duration = duration - 1;
+    //             }, 1000, 60);
+    //         }
+    // }, 'json');
+    var reg_data = {image_code_id: imageCodeId, image_code: imageCode};
+    $.get("/api/v1_0/sms_codes/"+mobile, reg_data, function (resp) {
+        if (resp.error_code == 4004 || resp.error_code == 4002){
+            // 图片验证码的错误
+            $("#image-code-err span").html(resp.errmsg);
+            $("#image-code-err").show();
+            $(".phonecode-a").attr("onclick", "sendSMSCode();");
+        } else if (resp.error_code == 0){
+            // 发送短信成功
+            var $time = $(".phonecode-a");
+            var duration = 60;
+            // 设置定时器
+            var intervalid = setInterval(function () {
+                $time.html(duration + "秒");
+                if (duration === 1){
+                    // 清除定时器
+                    clearInterval(intervalid);
+                    $time.html("获取验证码");
+                    $(".phonecode-a").attr("onclick", "sendSMSCode();");
                 }
-                $(".phonecode-a").attr("onclick", "sendSMSCode();");
-            }   
-            else {
-                var $time = $(".phonecode-a");
-                var duration = 60;
-                var intervalid = setInterval(function(){
-                    $time.html(duration + "秒"); 
-                    if(duration === 1){
-                        clearInterval(intervalid);
-                        $time.html('获取验证码'); 
-                        $(".phonecode-a").attr("onclick", "sendSMSCode();");
-                    }
-                    duration = duration - 1;
-                }, 1000, 60); 
-            }
-    }, 'json'); 
+                duration = duration - 1;
+            }, 1000, 60);
+        }
+    });
 }
 
 $(document).ready(function() {
@@ -113,5 +137,38 @@ $(document).ready(function() {
             $("#password2-err").show();
             return;
         }
+
+
+        var req_data = {
+            mobile: mobile,
+            sms_code: phoneCode,
+            password: passwd
+        };
+        // 将js对象转换成json字符串
+        req_json = JSON.stringify(req_data);
+        // $.post("api/v1_0/users", req_json, function (resp) {
+        //     if (resp.error_code == 0){
+        //         // 注册成功,引导到主页面
+        //         location.href = '/';
+        //     } else{
+        //         alert(resp.errmsg);
+        //     }
+        // })
+
+        $.ajax({
+            url: "api/v1_0/users",
+            type: "post",
+            data: req_json,
+            contentType: "application/json",
+            dataType: "json",
+            headers: {"X-CSRFToken": getCookie("csrf_token")}
+        }).done(function (resp) {
+             if (resp.error_code == 0){
+                // 注册成功,引导到主页面
+                location.href = '/';
+            } else{
+                alert(resp.errmsg);
+            }
+        })
     });
-})
+});

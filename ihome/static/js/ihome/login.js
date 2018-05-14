@@ -24,5 +24,36 @@ $(document).ready(function() {
             $("#password-err").show();
             return;
         }
+
+        var req_data = {
+            mobile: mobile,
+            password: passwd
+        };
+        // 将js对象转换成json字符串
+        req_json = JSON.stringify(req_data);
+        // $.post("api/v1_0/users", req_json, function (resp) {
+        //     if (resp.error_code == 0){
+        //         // 注册成功,引导到主页面
+        //         location.href = '/';
+        //     } else{
+        //         alert(resp.errmsg);
+        //     }
+        // })
+
+        $.ajax({
+            url: "api/v1_0/session",
+            type: "post",
+            data: req_json,
+            contentType: "application/json",
+            dataType: "json",
+            headers: {"X-CSRFToken": getCookie("csrf_token")}
+        }).done(function (resp) {
+             if (resp.error_code == 0){
+                // 注册成功,引导到主页面
+                location.href = '/';
+            } else{
+                alert(resp.errmsg);
+            }
+        })
     });
-})
+});

@@ -35,7 +35,7 @@ class CCP(object):
 
     def __new__(cls, *args, **kwargs):
         # 判断CCP中有没有类属性instance
-        if not cls.instance:
+        if cls.instance is None:
             cls.instance = super(CCP, cls).__new__(cls)
 
             # 初始化REST SDK
