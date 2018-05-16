@@ -27,4 +27,12 @@ function logout() {
 }
 
 $(document).ready(function(){
+    $.get("/api/v1_0/users/info", function (resp) {
+        if (resp.error_code == 0){
+            // 获取用户信息成功
+            $("#user-avatar").attr("src", resp.data.avatar_url);
+            $("#user-name").text(resp.data.username);
+            $("#user-mobile").text(resp.data.user_mobile);
+        }
+    })
 });

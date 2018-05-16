@@ -76,5 +76,22 @@ $(document).ready(function(){
             $(this).siblings("li").removeClass("active");
             $(".filter-title-bar>.filter-title").eq(2).children("span").eq(0).html($(this).html());
         }
-    })
-})
+    });
+
+    // 向后端获取城区信息
+    $.get("/api/v1_0/areas", function (resp) {
+        if (resp.error_code == 0) {
+            // 获取到了城区信息
+            // var areas = resp.data.areas;
+            // for (var i = 0; i < areas.length; i++) {
+            //     var area = areas[i];
+            //     $("#area-id").append('<option value="'+area.aid+'">'+area.aname+'</option>');
+            // }
+            // 使用前端模板渲染页面
+            area_html = template("area-tmp", {areas: resp.data.areas});
+            $(".filter-area").html(area_html);
+        } else {
+            alert(resp.errmsg);
+        }
+    });
+});

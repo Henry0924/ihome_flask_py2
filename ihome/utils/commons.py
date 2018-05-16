@@ -3,6 +3,7 @@
 from werkzeug.routing import BaseConverter
 from flask import session, jsonify, g
 from ihome.utils.response_code import RET
+from functools import wraps
 
 
 class RegexConverter(BaseConverter):
@@ -17,7 +18,8 @@ class RegexConverter(BaseConverter):
 
 def login_required(view_func):
     """检验用户登录状态装饰器"""
-    def wapper(*args, **kwargs):
+    @wraps(view_func)
+    def wrapper(*args, **kwargs):
         user_id = session.get("user_id")
         if user_id is None:
             resp = {
@@ -29,4 +31,4 @@ def login_required(view_func):
             g.user_id = user_id
             return view_func(*args, **kwargs)
 
-    return wapper
+    return wrapper
