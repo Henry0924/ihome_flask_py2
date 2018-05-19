@@ -8,6 +8,7 @@ from flask import current_app, jsonify, make_response, request
 from ihome.utils.response_code import RET
 from ihome.libs.yuntongxun.sms import CCP
 from ihome.models import User
+from ihome.tasks.sms import tasks
 
 
 @api.route("/image_codes/<image_code_id>")
@@ -120,28 +121,40 @@ def send_sms_code(mobile):
         return jsonify(resp)
 
     # 发送验证码短信
-    try:
-        ccp = CCP()
-        result = ccp.send_template_sms(mobile, [sms_code, str(constants.SMS_CODE_REDIS_EXPIRES/60)], 1)
-    except Exception as e:
-        current_app.logger.error(e)
-        resp = {
-            "error_code": RET.THIRDERR,
-            "errmsg": "发送短信异常"
-        }
-        return jsonify(resp)
+    # 通过celery发送
+    # task_sms.send_template_sms.delay(mobile, [sms_code, str(constants.SMS_CODE_REDIS_EXPIRES/60)], 1)
+    # result返回异步结果对象， 通过对象能够获取最终执行结果
+    result = tasks.send_template_sms.delay(mobile, [sms_code, str(constants.SMS_CODE_REDIS_EXPIRES/60)], 1)
+    # 通过get方法能返回执行结果
+    # get()默认是阻塞的, 会等到worker执行完成有了结果的时候才返回
+    # get()通过timeout超时时间，可以在超过超时时间后立即返回
+    ret = result.get()
+    print ret
 
-    if result == 0:
-        # 发送成功
-        resp = {
-            "error_code": RET.OK,
-            "errmsg": "发送短信成功"
-        }
-        return jsonify(resp)
-    else:
-        # 发送失败
-        resp = {
-            "error_code": RET.THIRDERR,
-            "errmsg": "发送短信失败"
-        }
-        return jsonify(resp)
+    return jsonify(error_code=RET.OK, errmsg="ok")
+
+    # try:
+    #     ccp = CCP()
+    #     result = ccp.send_template_sms(mobile, [sms_code, str(constants.SMS_CODE_REDIS_EXPIRES/60)], 1)
+    # except Exception as e:
+    #     current_app.logger.error(e)
+    #     resp = {
+    #         "error_code": RET.THIRDERR,
+    #         "errmsg": "发送短信异常"
+    #     }
+    #     return jsonify(resp)
+    #
+    # if result == 0:
+    #     # 发送成功
+    #     resp = {
+    #         "error_code": RET.OK,
+    #         "errmsg": "发送短信成功"
+    #     }
+    #     return jsonify(resp)
+    # else:
+    #     # 发送失败
+    #     resp = {
+    #         "error_code": RET.THIRDERR,
+    #         "errmsg": "发送短信失败"
+    #     }
+    #     return jsonify(resp)

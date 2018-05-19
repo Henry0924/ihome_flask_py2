@@ -44,9 +44,62 @@ def set_user_avatar():
     return jsonify(error_code=RET.OK, errmsg="保存头像成功", data={"avatar_url": avatar_url})
 
 
+@api.route("/users/real_name", methods=["POST"])
+@login_required
+def save_real_name():
+    """实名认证"""
+    # 获取用户id
+    user_id = g.user_id
+    # 获取参数
+    req_dict = request.get_json()
+    if not req_dict:
+        return jsonify(error_code=RET.PARAMERR, errmsg="参数不完整")
+    real_name = req_dict.get("real_name")
+    id_card = req_dict.get("id_card")
+
+    # 校验参数
+    if not all([real_name, id_card]):
+        return jsonify(error_code=RET.PARAMERR, errmsg="实名信息不完整")
+
+    # 业务处理
+    # 保存实名信息
+    try:
+        User.query.filter_by(id=user_id, real_name=None, id_card=None)\
+            .update({"real_name": real_name, "id_card": id_card})
+        db.session.commit()
+    except Exception as e:
+        current_app.logger.error(e)
+        db.session.rollback()
+        return jsonify(error_code=RET.DBERR, errmsg="保存实名信息失败")
+
+    return jsonify(error_code=RET.OK, errmsg="实名成功")
+
+
+@api.route("/users/real_name", methods=["GET"])
+@login_required
+def get_real_name():
+    """获取实名信息"""
+    # 获取用户id
+    user_id = g.user_id
+
+    # 获取用户实名信息
+    try:
+        user = User.query.get(user_id)
+    except Exception as e:
+        current_app.logger.error(e)
+        return jsonify(error_code=RET.DBERR, errmsg="查询实名信息失败")
+
+    if user is None:
+        return jsonify(error_code=RET.NODATA, errmsg="未实名")
+
+    # 返回值
+    return jsonify(error_code=RET.OK, errmsg="ok", data=user.auth_to_dict())
+
+
 @api.route("/users/name", methods=["PUT"])
 @login_required
 def set_user_name():
+    """设置用户名"""
     # 获取用户id
     user_id = g.user_id
     # 获取参数
@@ -74,6 +127,7 @@ def set_user_name():
 @api.route("/users/info", methods=["GET"])
 @login_required
 def get_user_info():
+    """获取用户名"""
     # 获取用户id
     user_id = g.user_id
 
