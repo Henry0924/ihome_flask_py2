@@ -28,6 +28,10 @@ class DevConfig(Config):
     """开发模式使用的配置信息"""
     DEBUG = True
 
+    # 支付宝
+    ALIPAY_APPID = "2016091400512796"
+    ALIPAY_URL = "https://openapi.alipaydev.com/gateway.do"
+
 
 class ProConfig(Config):
     """生产模式 线上模式的配置信息"""

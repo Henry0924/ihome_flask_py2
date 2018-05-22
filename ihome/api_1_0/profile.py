@@ -127,7 +127,7 @@ def set_user_name():
 @api.route("/users/info", methods=["GET"])
 @login_required
 def get_user_info():
-    """获取用户名"""
+    """获取用户信息"""
     # 获取用户id
     user_id = g.user_id
 

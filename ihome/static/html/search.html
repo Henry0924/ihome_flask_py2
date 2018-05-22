@@ -48,7 +48,11 @@
             </ul>
             <script type="text/html" id="area-tmp">
                 {{ each areas as area }}
+                {{if area.aid==aid}}
+                <li area-id="{{ area.aid }}" class="active">{{ area.aname }}</li>
+                {{else}}
                 <li area-id="{{ area.aid }}">{{ area.aname }}</li>
+                {{/if}}
                 {{ /each }}
             </script>
             <ul class="filter-item filter-sort">
@@ -61,40 +65,23 @@
     </div>
     <div class="display-mask"></div>
     <ul class="house-list">
-        <li class="house-item">
-            <a href="/detail.html?id=1"><img src="/static/images/home01.jpg"></a>
-            <div class="house-desc">
-                <div class="landlord-pic"><img src="/static/images/landlord01.jgp"></div>
-                <div class="house-price">￥<span>200</span>/晚</div>
-                <div class="house-intro">
-                    <span class="house-title">房屋标题1</span>
-                    <em>出租6间 - 1次入住 - 中关村软件园</em>
-                </div>
-            </div>
-        </li>
-        <li class="house-item">
-            <a href="/detail.html?id=1"><img src="/static/images/home01.jpg"></a>
-            <div class="house-desc">
-                <div class="landlord-pic"><img src="/static/images/landlord01.jgp"></div>
-                <div class="house-price">￥<span>200</span>/晚</div>
-                <div class="house-intro">
-                    <span class="house-title">房屋标题1</span>
-                    <em>出租6间 - 1次入住 - 中关村软件园</em>
-                </div>
-            </div>
-        </li>
-        <li class="house-item">
-            <a href="/detail.html?id=1"><img src="/static/images/home01.jpg"></a>
-            <div class="house-desc">
-                <div class="landlord-pic"><img src="/static/images/landlord01.jgp"></div>
-                <div class="house-price">￥<span>200</span>/晚</div>
-                <div class="house-intro">
-                    <span class="house-title">房屋标题1</span>
-                    <em>出租6间 - 1次入住 - 中关村软件园</em>
-                </div>
-            </div>
-        </li>
+
     </ul>
+    <script type="text/html" id="house-list-tmp">
+        {{each houses as house}}
+        <li class="house-item">
+            <a href="/detail.html?id={{house.id}}"><img src="{{house.img_url}}"></a>
+            <div class="house-desc">
+                <div class="landlord-pic"><img src="/static/images/landlord01.jgp"></div>
+                <div class="house-price">￥<span>{{(house.price/100.0).toFixed(0)}}</span>/晚</div>
+                <div class="house-intro">
+                    <span class="house-title">{{house.title}}</span>
+                    <em>出租6间 - 1次入住 - 中关村软件园</em>
+                </div>
+            </div>
+        </li>
+        {{/each}}
+    </script>
     <div class="footer">
         <p><span><i class="fa fa-copyright"></i></span>爱家租房&nbsp;&nbsp;享受家的温馨</p>
     </div>
